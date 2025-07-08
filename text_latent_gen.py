@@ -129,8 +129,8 @@ def process_videos(input_dir, output_dir, prompt_file):
             continue
 
 if __name__ == "__main__":
-    input_directory = "/media/main/Data/Abhinav_gems/Train"    # Replace with your input directory
-    output_directory = "/media/main/Data/Abhinav_gems/MiniCPM-V/output_train_promtp1a_cleaned"     # Replace with your output directory
-    prompt_file_path = "/media/main/Data/Abhinav_gems/Video-ChatGPT/prompts/prompt1.txt"        # Replace with your prompt file path
+    input_directory = "/path/to/input/videos/directory"    # Replace with your input directory
+    output_directory = "/path/to/output/directory"     # Replace with your output directory
+    prompt_file_path = "/path/to/prompt/txt/file"        # Replace with your prompt file path
     
     process_videos(input_directory, output_directory, prompt_file_path)
