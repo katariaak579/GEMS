@@ -757,7 +757,8 @@ class EarlyStopping:
         self.val_loss_min = val_loss
 
 class CustomEmotionDataset(Dataset):
-    def __init__(self, face_features_path, text_latent_path1, text_latent_path2, text_latent_path3, labels_path, seq_len, pred_len,root_path="/media/main/Data/Abhinav_gems/S3Attention/Dataset"):
+    def __init__(self, face_features_path, text_latent_path1, text_latent_path2, text_latent_path3, labels_path, seq_len, pred_len,root_path="../Dataset"):
+
         self.root_path = root_path
         self.face_features_path = os.path.join(root_path, face_features_path)
         self.text_latent1_path = os.path.join(root_path, text_latent_path1)
@@ -1861,6 +1862,7 @@ def main():
     # data loader
     parser.add_argument('--data', type=str, default='custom', help='dataset type')
     parser.add_argument('--root_path', type=str, default='/media/main/Data/Abhinav_gems/S3Attention/Dataset', help='root path of the data directory')
+
     parser.add_argument('--face_features_folder', type=str, default='face_features', help='folder name for face features')
     parser.add_argument('--text_latent1_folder', type=str, default='text_latent1', help='folder name for text latent 1')
     parser.add_argument('--text_latent2_folder', type=str, default='text_latent2', help='folder name for text latent 2')
