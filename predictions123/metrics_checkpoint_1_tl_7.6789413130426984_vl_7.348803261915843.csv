@@ -1,0 +1,2 @@
+group_emotion_accuracy,group_emotion_category_accuracy,class_emotion_accuracy,event_emotion_accuracy,event_accuracy,class_valence_mse,class_valence_ccc,class_valence_mae,class_arousal_mse,class_arousal_ccc,class_arousal_mae
+0.5532194480946123,0.40867279894875164,0.5532194480946123,0.5505913272010512,0.15505913272010513,0.015817026,-0.027566505018548768,0.11227832,0.010852433,-0.031721113693417444,0.093535386
