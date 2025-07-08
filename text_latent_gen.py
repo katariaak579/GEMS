@@ -5,13 +5,13 @@ from decord import VideoReader, cpu
 from tqdm import tqdm
 import os
 from pathlib import Path
+import re
 
 # Model initialization
 model = AutoModel.from_pretrained('openbmb/MiniCPM-V-2_6', trust_remote_code=True,
     attn_implementation='sdpa', torch_dtype=torch.bfloat16)
 model = model.eval().cuda()
 tokenizer = AutoTokenizer.from_pretrained('openbmb/MiniCPM-V-2_6', trust_remote_code=True)
-
 MAX_NUM_FRAMES = 64  # if cuda OOM set a smaller number
 
 def read_prompt(prompt_file):
@@ -33,6 +33,38 @@ def encode_video(video_path):
     frames = [Image.fromarray(v.astype('uint8')) for v in frames]
     print(f'Processing {os.path.basename(video_path)} - num frames:', len(frames))
     return frames
+
+def clean_model_output(raw_output):
+    """Extract and clean the ASSISTANT response from the model output"""
+    # Convert the output to string if it's not already
+    content = str(raw_output)
+    
+    # Extract the ASSISTANT response
+    pattern = r"'ASSISTANT', ['\"](.+?(?=']|\"))['\"]\]"
+    match = re.search(pattern, content, re.DOTALL)
+    
+    if match:
+        cleaned_content = match.group(1)
+        # Remove escape characters
+        cleaned_content = cleaned_content.replace('\\n', '\n').replace('\\', '')
+        return cleaned_content
+    else:
+        # If the pattern doesn't match, try to extract the answer directly
+        # This handles cases where the output might be in a different format
+        if "ASSISTANT" in content:
+            # Try to find content after ASSISTANT
+            assistant_split = content.split("ASSISTANT", 1)
+            if len(assistant_split) > 1:
+                # Clean up the extracted content
+                cleaned = assistant_split[1]
+                # Remove common artifacts
+                cleaned = re.sub(r"['\"],.*$", "", cleaned)
+                cleaned = cleaned.strip("'\"[], ")
+                cleaned = cleaned.replace('\\n', '\n').replace('\\', '')
+                return cleaned
+        
+        # If all else fails, return the raw output
+        return raw_output
 
 def process_videos(input_dir, output_dir, prompt_file):
     # Create output directory if it doesn't exist
@@ -83,17 +115,22 @@ def process_videos(input_dir, output_dir, prompt_file):
                 **params
             )
             
-            # Save output
+            # Clean the output before saving
+            cleaned_answer = clean_model_output(answer)
+            
+            # Save cleaned output
             with open(output_path, 'w') as f:
-                f.write(answer)
+                f.write(cleaned_answer)
+            
+            print(f"Saved cleaned output for {video_name}")
             
         except Exception as e:
             print(f"Error processing {video_name}: {str(e)}")
             continue
 
 if __name__ == "__main__":
-    input_directory = "/path_to_input_directory_containing_videos"    # Replace with your input directory
-    output_directory = "/path_to_output_directory"     # Replace with your output directory
-    prompt_file_path = "/path_to_prompt_txt_file"        # Replace with your prompt file path
+    input_directory = "/media/main/Data/Abhinav_gems/Train"    # Replace with your input directory
+    output_directory = "/media/main/Data/Abhinav_gems/MiniCPM-V/output_train_promtp1a_cleaned"     # Replace with your output directory
+    prompt_file_path = "/media/main/Data/Abhinav_gems/Video-ChatGPT/prompts/prompt1.txt"        # Replace with your prompt file path
     
     process_videos(input_directory, output_directory, prompt_file_path)
