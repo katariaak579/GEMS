@@ -8,7 +8,7 @@ Understanding individual, group and event level emotions along with contextual i
 
 ## Framework Overview
 
-![GEMS Framework](path/to/framework_overview.png)
+![GEMS Framework](assets/fig1.png)
 
 *Framework overview: GEMS connects individual emotions, scene interactions, and event understanding for multi-label prediction in a multi-task learning setup using multimodal swin-transformer and S3Attention architecture.*
 
